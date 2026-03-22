@@ -20,12 +20,14 @@ app.use(express_1.default.json());
 app.get("/health", (_req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
-app.use("/auth", authRoutes_1.default);
-app.use("/admin", authMiddleware_1.authenticate, authMiddleware_1.requireMaster, requestContextMiddleware_1.injectRequestContext, adminRoutes_1.default);
-app.use(authMiddleware_1.authenticate, authMiddleware_1.injectWorkspace, requestContextMiddleware_1.injectRequestContext, routes_1.default);
 const publicPath = path_1.default.join(__dirname, "..", "public");
 if (fs_1.default.existsSync(publicPath)) {
     app.use(express_1.default.static(publicPath));
+}
+app.use("/auth", authRoutes_1.default);
+app.use("/admin", authMiddleware_1.authenticate, authMiddleware_1.requireMaster, requestContextMiddleware_1.injectRequestContext, adminRoutes_1.default);
+app.use(authMiddleware_1.authenticate, authMiddleware_1.injectWorkspace, requestContextMiddleware_1.injectRequestContext, routes_1.default);
+if (fs_1.default.existsSync(publicPath)) {
     app.get("*", (_req, res) => {
         res.sendFile(path_1.default.join(publicPath, "index.html"));
     });
